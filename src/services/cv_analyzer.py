@@ -1,6 +1,6 @@
 """Servicio de análisis de CV - Fase 1 del sistema."""
 
-from typing import List
+from typing import List, Tuple
 
 from src.models.schemas import (
     Requirement,
@@ -142,7 +142,7 @@ class CVAnalyzer:
             discarding_requirement=discarding_req,
         )
 
-    def analyze(self, offer_text: str, cv_text: str) -> CVEvaluationResult:
+    def analyze(self, offer_text: str, cv_text: str) -> Tuple[CVEvaluationResult, JobOffer]:
         """
         Ejecuta el análisis completo: parsea oferta y evalúa CV.
 
@@ -151,7 +151,7 @@ class CVAnalyzer:
             cv_text: Texto del CV del candidato
 
         Returns:
-            Resultado de la evaluación
+            Tupla con el resultado de la evaluación y la oferta parseada
         """
         job_offer = self.parse_job_offer(offer_text)
         return self.evaluate_cv(cv_text, job_offer), job_offer

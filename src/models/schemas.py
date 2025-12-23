@@ -2,7 +2,7 @@
 
 from enum import Enum
 from typing import List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class RequirementType(str, Enum):
@@ -20,8 +20,7 @@ class Requirement(BaseModel):
         ..., description="Tipo de requisito (obligatorio u opcional)"
     )
 
-    class Config:
-        use_enum_values = True
+    model_config = ConfigDict(use_enum_values=True)
 
 
 class JobOffer(BaseModel):

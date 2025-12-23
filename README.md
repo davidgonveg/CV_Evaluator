@@ -42,7 +42,7 @@ ollama serve
 ollama pull mistral:7b-instruct-q4_K_M
 ```
 
-> **Nota**: El modelo `mistral:7b-instruct-q4_K_M` es una version cuantizada que funciona bien con 16GB de RAM en CPU. La primera ejecucion sera mas lenta mientras carga el modelo.
+> **Nota**: El modelo `mistral:7b-instruct-q4_K_M` es una version cuantizada que funciona bien con 8GB de RAM en CPU. La primera ejecucion sera mas lenta mientras carga el modelo.
 
 ### 3. Python 3.10+
 
@@ -173,24 +173,28 @@ El sistema usa LangChain para abstraer el proveedor LLM. Para cambiar:
 
 ### Usar OpenAI (requiere API key de pago)
 
-```bash
+```
 # .env
 LLM_PROVIDER=openai
 LLM_MODEL=gpt-4o-mini
 OPENAI_API_KEY=sk-...
+```
 
+```bash
 # Instalar dependencia
 pip install langchain-openai
 ```
 
 ### Usar Anthropic (requiere API key de pago)
 
-```bash
+```
 # .env
 LLM_PROVIDER=anthropic
 LLM_MODEL=claude-3-haiku-20240307
 ANTHROPIC_API_KEY=sk-ant-...
+```
 
+```bash
 # Instalar dependencia
 pip install langchain-anthropic
 ```
