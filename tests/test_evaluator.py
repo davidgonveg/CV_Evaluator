@@ -402,24 +402,36 @@ def run_single_test(analyzer, test_case: dict) -> dict:
         if result.discarding_requirement:
             print(f"   Motivo descarte: {result.discarding_requirement}")
 
-        print(f"\n   ✅ Requisitos cumplidos ({len(result.matching_requirements)}):")
-        for req in result.matching_requirements:
-            print(f"      - {req}")
+        # Mostrar desglose del score (nuevo)
+        if result.score_breakdown:
+            bd = result.score_breakdown
+            print(f"\n   📈 DESGLOSE DEL SCORE:")
+            print(f"      Obligatorios: {bd['mandatory']['fulfilled']}/{bd['mandatory']['total']} ({bd['mandatory']['percentage']}%) - Peso: {bd['mandatory']['weight']}")
+            print(f"      Opcionales:   {bd['optional']['fulfilled']}/{bd['optional']['total']} ({bd['optional']['percentage']}%) - Peso: {bd['optional']['weight']}")
 
-        print(f"\n   ❌ Requisitos no cumplidos ({len(result.unmatching_requirements)}):")
-        for req in result.unmatching_requirements:
-            print(f"      - {req}")
+        # Mostrar evaluaciones con reasoning (nuevo)
+        if result.evaluations_with_reasoning:
+            print(f"\n   🔍 EVALUACIÓN DETALLADA:")
+            for eval in result.evaluations_with_reasoning:
+                status_icon = "✅" if eval.status == "matching" else "❌" if eval.status == "unmatching" else "❓"
+                tipo = "OBL" if eval.requirement_type == "mandatory" else "OPT"
+                print(f"      {status_icon} [{tipo}] {eval.requirement}")
+                print(f"         → {eval.reasoning}")
 
-        print(f"\n   ❓ No encontrados ({len(result.not_found_requirements)}):")
-        for req in result.not_found_requirements:
-            print(f"      - {req}")
-
-        # Mostrar requisitos parseados (para verificar separación)
-        print(f"\n   📝 Requisitos parseados ({len(job_offer.requirements)}):")
-        for req in job_offer.requirements:
-            req_type_str = req.requirement_type.value if hasattr(req.requirement_type, 'value') else str(req.requirement_type)
-            tipo = "🔴 OBL" if req_type_str == "mandatory" else "🟢 OPT"
-            print(f"      {tipo} {req.description}")
+        # Mostrar resumen ejecutivo (nuevo)
+        if result.summary:
+            s = result.summary
+            status_color = "✅" if s.status == "APTO" else "⚠️" if s.status == "REVISAR" else "❌"
+            print(f"\n   {'═'*50}")
+            print(f"   📋 RESUMEN EJECUTIVO")
+            print(f"   {'═'*50}")
+            print(f"   Estado: {status_color} {s.status}")
+            if s.strengths:
+                print(f"   Fortalezas: {', '.join(s.strengths)}")
+            if s.gaps:
+                print(f"   Gaps: {', '.join(s.gaps)}")
+            print(f"   Recomendación: {s.recommendation}")
+            print(f"   {'═'*50}")
 
         return test_result
 

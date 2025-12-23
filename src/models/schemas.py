@@ -1,7 +1,7 @@
 """Schemas Pydantic para validación de datos."""
 
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Dict
 from pydantic import BaseModel, Field
 
 
@@ -33,6 +33,24 @@ class JobOffer(BaseModel):
     )
 
 
+class RequirementEvaluation(BaseModel):
+    """Evaluación detallada de un requisito individual."""
+
+    requirement: str = Field(..., description="Descripción del requisito")
+    requirement_type: str = Field(..., description="Tipo: mandatory u optional")
+    status: str = Field(..., description="Estado: matching, unmatching, not_found")
+    reasoning: str = Field(..., description="Explicación del LLM")
+
+
+class EvaluationSummary(BaseModel):
+    """Resumen ejecutivo de la evaluación."""
+
+    status: str = Field(..., description="APTO, NO APTO, o REVISAR")
+    strengths: List[str] = Field(default_factory=list, description="Puntos fuertes")
+    gaps: List[str] = Field(default_factory=list, description="Carencias detectadas")
+    recommendation: str = Field(..., description="Recomendación breve")
+
+
 class CVEvaluationResult(BaseModel):
     """Resultado de la evaluación inicial del CV."""
 
@@ -51,6 +69,16 @@ class CVEvaluationResult(BaseModel):
     )
     discarding_requirement: Optional[str] = Field(
         None, description="Requisito obligatorio que causó el descarte"
+    )
+    # Nuevos campos para mejoras
+    evaluations_with_reasoning: List[RequirementEvaluation] = Field(
+        default_factory=list, description="Evaluaciones detalladas con reasoning"
+    )
+    summary: Optional[EvaluationSummary] = Field(
+        None, description="Resumen ejecutivo de la evaluación"
+    )
+    score_breakdown: Optional[Dict[str, any]] = Field(
+        None, description="Desglose del score por categoría"
     )
 
 
