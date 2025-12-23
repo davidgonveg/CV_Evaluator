@@ -363,7 +363,7 @@ def run_single_test(analyzer, test_case: dict) -> dict:
             "requirements_parsed": [
                 {
                     "description": req.description,
-                    "type": req.requirement_type.value
+                    "type": req.requirement_type.value if hasattr(req.requirement_type, 'value') else str(req.requirement_type)
                 }
                 for req in job_offer.requirements
             ],
@@ -417,7 +417,8 @@ def run_single_test(analyzer, test_case: dict) -> dict:
         # Mostrar requisitos parseados (para verificar separación)
         print(f"\n   📝 Requisitos parseados ({len(job_offer.requirements)}):")
         for req in job_offer.requirements:
-            tipo = "🔴 OBL" if req.requirement_type.value == "mandatory" else "🟢 OPT"
+            req_type_str = req.requirement_type.value if hasattr(req.requirement_type, 'value') else str(req.requirement_type)
+            tipo = "🔴 OBL" if req_type_str == "mandatory" else "🟢 OPT"
             print(f"      {tipo} {req.description}")
 
         return test_result
