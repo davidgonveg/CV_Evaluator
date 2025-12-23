@@ -1,0 +1,7 @@
+OFERTA DE TRABAJO: Desarrollador de IA Generativa
+
+Requisitos:
+
+- Experiencia minima de 3 años en Python
+- Formacion minima requerida: Ingenieria/Grado en informatica o Master en IA
+- Valorable conocimientos en FastAPI y LangChain

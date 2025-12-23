@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # Servicio principal de la aplicación
+  cv-evaluator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cv-evaluator
+    ports:
+      - "8501:8501"
+    environment:
+      - PYTHONPATH=/app
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - LLM_PROVIDER=ollama
+      - LLM_MODEL=mistral:7b-instruct-q4_K_M
+      - LLM_TEMPERATURE=0.1
+    volumes:
+      # Montar datos para persistencia
+      - ./data:/app/data
+    extra_hosts:
+      # Permitir acceso a Ollama en el host
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Servicio opcional de Ollama (si no está instalado en el host)
+  # Descomentar si quieres ejecutar Ollama también en Docker
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   container_name: ollama
+  #   ports:
+  #     - "11434:11434"
+  #   volumes:
+  #     - ollama_data:/root/.ollama
+  #   restart: unless-stopped
+  #   # Para GPU NVIDIA (descomentar si tienes GPU)
+  #   # deploy:
+  #   #   resources:
+  #   #     reservations:
+  #   #       devices:
+  #   #         - driver: nvidia
+  #   #           count: all
+  #   #           capabilities: [gpu]
+
+# volumes:
+#   ollama_data:

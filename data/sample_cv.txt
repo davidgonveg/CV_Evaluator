@@ -1,0 +1,21 @@
+CURRICULUM VITAE
+
+EXPERIENCIA PROFESIONAL:
+
+Desarrollador de IA Generativa - EMPRESA A (Abril 2023 - Actualidad)
+Encargado de desarrollar sistemas de IA generativa en Python, diseñando prompts eficientes y sistemas escalables.
+
+Data Science / LLM - EMPRESA B (Enero 2022 - Abril 2023)
+Analista de datos para el entrenamiento de modelos LLM. Entre mis funciones reentrenamiento y validacion con prompts diseñados para validar su correcto funcionamiento.
+
+FORMACION:
+
+Ingenieria Informatica - Universidad Politecnica (2017 - 2021)
+Graduado con mencion en Inteligencia Artificial.
+
+HABILIDADES TECNICAS:
+
+- Python (avanzado)
+- Machine Learning y Deep Learning
+- Git, Docker
+- SQL y NoSQL
