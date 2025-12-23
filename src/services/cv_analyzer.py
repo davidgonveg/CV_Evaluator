@@ -8,6 +8,8 @@ from src.models.schemas import (
     RequirementType,
     JobOffer,
     CVEvaluationResult,
+    RequirementEvaluation,
+    EvaluationSummary,
 )
 from src.prompts.templates import PARSE_OFFER_PROMPT, EVALUATE_CV_PROMPT
 from src.services.llm_service import LLMService
@@ -218,38 +220,56 @@ class CVAnalyzer:
         not_found = []
         discarded = False
         discarding_req = None
+        evaluations_with_reasoning = []
 
-        # Crear mapa de tipos de requisitos
-        req_types = {
-            req.description: req.requirement_type
-            for req in job_offer.requirements
-        }
+        # Contadores para score ponderado
+        mandatory_total = 0
+        mandatory_fulfilled = 0
+        optional_total = 0
+        optional_fulfilled = 0
 
         for evaluation in response.get("evaluations", []):
             req_desc = evaluation["requirement"]
             status = evaluation["status"]
             req_type = evaluation.get("requirement_type", "optional")
+            reasoning = evaluation.get("reasoning", "Sin explicación disponible")
+
+            # Guardar evaluación con reasoning
+            evaluations_with_reasoning.append(RequirementEvaluation(
+                requirement=req_desc,
+                requirement_type=req_type,
+                status=status,
+                reasoning=reasoning
+            ))
 
             # Determinar si es obligatorio
             is_mandatory = req_type == "mandatory" or req_type == RequirementType.MANDATORY
 
+            # Contar por tipo
+            if is_mandatory:
+                mandatory_total += 1
+            else:
+                optional_total += 1
+
             if status == "matching":
                 matching.append(req_desc)
+                if is_mandatory:
+                    mandatory_fulfilled += 1
+                else:
+                    optional_fulfilled += 1
             elif status == "unmatching":
                 unmatching.append(req_desc)
-                # Si es obligatorio y no cumple, descartar
                 if is_mandatory:
                     discarded = True
                     discarding_req = req_desc
             elif status == "not_found":
                 not_found.append(req_desc)
-                # not_found en obligatorio también descarta
                 if is_mandatory:
                     discarded = True
                     discarding_req = req_desc
 
-        # Calcular puntuación
-        total_requirements = len(job_offer.requirements)
+        # Calcular puntuación (todos los requisitos pesan igual)
+        total_requirements = mandatory_total + optional_total
         fulfilled = len(matching)
 
         if discarded:
@@ -259,6 +279,30 @@ class CVAnalyzer:
         else:
             score = 100
 
+        # Generar resumen ejecutivo
+        summary = self._generate_summary(
+            score=score,
+            discarded=discarded,
+            matching=matching,
+            unmatching=unmatching,
+            not_found=not_found,
+            discarding_req=discarding_req
+        )
+
+        # Desglose del score
+        score_breakdown = {
+            "total_requirements": total_requirements,
+            "fulfilled": fulfilled,
+            "mandatory": {
+                "fulfilled": mandatory_fulfilled,
+                "total": mandatory_total,
+            },
+            "optional": {
+                "fulfilled": optional_fulfilled,
+                "total": optional_total,
+            }
+        }
+
         return CVEvaluationResult(
             score=score,
             discarded=discarded,
@@ -266,6 +310,56 @@ class CVAnalyzer:
             unmatching_requirements=unmatching,
             not_found_requirements=not_found,
             discarding_requirement=discarding_req,
+            evaluations_with_reasoning=evaluations_with_reasoning,
+            summary=summary,
+            score_breakdown=score_breakdown,
+        )
+
+    def _generate_summary(
+        self,
+        score: int,
+        discarded: bool,
+        matching: list,
+        unmatching: list,
+        not_found: list,
+        discarding_req: str
+    ) -> EvaluationSummary:
+        """Genera un resumen ejecutivo de la evaluación."""
+
+        # Determinar estado
+        if discarded:
+            status = "NO APTO"
+            recommendation = f"Descartado por no cumplir requisito obligatorio: {discarding_req}"
+        elif score >= 80:
+            status = "APTO"
+            recommendation = "Candidato recomendado para continuar en el proceso."
+        elif score >= 50:
+            status = "REVISAR"
+            recommendation = "Candidato con potencial, revisar gaps antes de decidir."
+        else:
+            status = "NO APTO"
+            recommendation = "Candidato no cumple suficientes requisitos."
+
+        # Extraer fortalezas (requisitos matching, simplificados)
+        strengths = []
+        for req in matching[:5]:  # Máximo 5
+            # Simplificar el texto del requisito
+            simplified = req.replace("Valorable ", "").replace("conocimientos en ", "")
+            simplified = simplified.replace("Experiencia mínima de ", "").replace("experiencia en ", "")
+            strengths.append(simplified)
+
+        # Extraer gaps (requisitos no cumplidos)
+        gaps = []
+        for req in (unmatching + not_found)[:5]:  # Máximo 5
+            simplified = req.replace("Valorable ", "").replace("conocimientos en ", "")
+            simplified = simplified.replace("Experiencia mínima de ", "").replace("experiencia en ", "")
+            gaps.append(simplified)
+
+        return EvaluationSummary(
+            status=status,
+            strengths=strengths,
+            gaps=gaps,
+            recommendation=recommendation
         )
 
     def analyze(self, offer_text: str, cv_text: str) -> CVEvaluationResult:
