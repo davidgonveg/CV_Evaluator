@@ -1,7 +1,7 @@
 """Schemas Pydantic para validación de datos."""
 
 from enum import Enum
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
 
 
@@ -77,7 +77,7 @@ class CVEvaluationResult(BaseModel):
     summary: Optional[EvaluationSummary] = Field(
         None, description="Resumen ejecutivo de la evaluación"
     )
-    score_breakdown: Optional[Dict[str, any]] = Field(
+    score_breakdown: Optional[Dict[str, Any]] = Field(
         None, description="Desglose del score por categoría"
     )
 
