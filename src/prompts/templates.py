@@ -49,6 +49,8 @@ INSTRUCCIONES:
 2. Sé riguroso pero justo en la evaluación.
 3. Si el CV menciona experiencia o conocimientos relacionados, considera que cumple el requisito.
 4. Si no hay mención alguna del tema en el CV, clasifícalo como "not_found".
+5. IMPORTANTE: Ignora diferencias de mayúsculas/minúsculas. "FastAPI", "Fastapi", "fastapi" son lo mismo.
+6. Revisa TODAS las secciones del CV: experiencia, formación, habilidades técnicas, proyectos, etc.
 
 Responde ÚNICAMENTE con un JSON válido con esta estructura exacta:
 {{
