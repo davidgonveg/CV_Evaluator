@@ -402,12 +402,13 @@ def run_single_test(analyzer, test_case: dict) -> dict:
         if result.discarding_requirement:
             print(f"   Motivo descarte: {result.discarding_requirement}")
 
-        # Mostrar desglose del score (nuevo)
+        # Mostrar desglose del score
         if result.score_breakdown:
             bd = result.score_breakdown
             print(f"\n   📈 DESGLOSE DEL SCORE:")
-            print(f"      Obligatorios: {bd['mandatory']['fulfilled']}/{bd['mandatory']['total']} ({bd['mandatory']['percentage']}%) - Peso: {bd['mandatory']['weight']}")
-            print(f"      Opcionales:   {bd['optional']['fulfilled']}/{bd['optional']['total']} ({bd['optional']['percentage']}%) - Peso: {bd['optional']['weight']}")
+            print(f"      Total: {bd['fulfilled']}/{bd['total_requirements']} requisitos cumplidos")
+            print(f"      Obligatorios: {bd['mandatory']['fulfilled']}/{bd['mandatory']['total']}")
+            print(f"      Opcionales:   {bd['optional']['fulfilled']}/{bd['optional']['total']}")
 
         # Mostrar evaluaciones con reasoning (nuevo)
         if result.evaluations_with_reasoning:

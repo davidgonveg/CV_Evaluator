@@ -268,26 +268,16 @@ class CVAnalyzer:
                     discarded = True
                     discarding_req = req_desc
 
-        # Calcular puntuación ponderada (70% obligatorios + 30% opcionales)
+        # Calcular puntuación (todos los requisitos pesan igual)
+        total_requirements = mandatory_total + optional_total
+        fulfilled = len(matching)
+
         if discarded:
             score = 0
-            mandatory_score = 0
-            optional_score = 0
+        elif total_requirements > 0:
+            score = int((fulfilled / total_requirements) * 100)
         else:
-            # Score de obligatorios (70% del total)
-            if mandatory_total > 0:
-                mandatory_score = (mandatory_fulfilled / mandatory_total) * 100
-            else:
-                mandatory_score = 100  # Si no hay obligatorios, se considera 100%
-
-            # Score de opcionales (30% del total)
-            if optional_total > 0:
-                optional_score = (optional_fulfilled / optional_total) * 100
-            else:
-                optional_score = 100  # Si no hay opcionales, se considera 100%
-
-            # Score ponderado: 70% obligatorios + 30% opcionales
-            score = int((mandatory_score * 0.7) + (optional_score * 0.3))
+            score = 100
 
         # Generar resumen ejecutivo
         summary = self._generate_summary(
@@ -301,17 +291,15 @@ class CVAnalyzer:
 
         # Desglose del score
         score_breakdown = {
+            "total_requirements": total_requirements,
+            "fulfilled": fulfilled,
             "mandatory": {
                 "fulfilled": mandatory_fulfilled,
                 "total": mandatory_total,
-                "percentage": round(mandatory_score, 1) if not discarded else 0,
-                "weight": "70%"
             },
             "optional": {
                 "fulfilled": optional_fulfilled,
                 "total": optional_total,
-                "percentage": round(optional_score, 1) if not discarded else 0,
-                "weight": "30%"
             }
         }
 
