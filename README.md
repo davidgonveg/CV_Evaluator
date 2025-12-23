@@ -53,11 +53,10 @@ Asegurate de tener Python 3.10 o superior instalado.
 ### Opcion A: Ejecucion local (recomendado para desarrollo)
 
 ```bash
-# Clonar el repositorio (si aplica)
-cd cv_evaluator
-
 # Crear entorno virtual
-python -m venv venv
+python -m venv venv 
+# Dependiendo del python instalado, puede ser
+# python3 -m venv venv  
 
 # Activar entorno virtual
 # En Linux/WSL/Mac:
