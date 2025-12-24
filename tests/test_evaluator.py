@@ -586,8 +586,171 @@ def run_dry_run():
         return expanded
 
     print("\n" + "="*70)
-    print("🧪 DRY-RUN: Test de separación de requisitos (sin LLM)")
+    print("🧪 DRY-RUN: Tests de lógica local (sin LLM)")
     print("="*70)
+
+    # =========================================================================
+    # TEST 1: Preprocesamiento de habilidades del CV
+    # =========================================================================
+    print("\n" + "-"*60)
+    print("📝 TEST: Preprocesamiento de habilidades del CV")
+    print("-"*60)
+
+    # Copiar función de preprocesamiento para no depender de imports
+    def _preprocess_cv_skills(cv_text: str) -> str:
+        skills_section_patterns = [
+            r'(?i)(habilidades\s*t[eé]cnicas\s*:?)',
+            r'(?i)(habilidades\s*:?)',
+            r'(?i)(skills\s*:?)',
+            r'(?i)(tecnolog[ií]as\s*:?)',
+            r'(?i)(conocimientos\s*t[eé]cnicos\s*:?)',
+            r'(?i)(stack\s*tecnol[oó]gico\s*:?)',
+            r'(?i)(competencias\s*t[eé]cnicas\s*:?)',
+        ]
+        other_section_patterns = [
+            r'(?i)^(experiencia|formaci[oó]n|educaci[oó]n|idiomas|proyectos|'
+            r'certificaciones|referencias|sobre\s*m[ií]|perfil|objetivo)',
+        ]
+        lines = cv_text.split('\n')
+        result_lines = []
+        in_skills_section = False
+        for line in lines:
+            stripped = line.strip()
+            is_skills_header = False
+            for pattern in skills_section_patterns:
+                if re.match(pattern, stripped):
+                    is_skills_header = True
+                    break
+            if is_skills_header:
+                in_skills_section = True
+                result_lines.append(line)
+                continue
+            is_other_section = False
+            for pattern in other_section_patterns:
+                if re.match(pattern, stripped):
+                    is_other_section = True
+                    break
+            if is_other_section:
+                in_skills_section = False
+                result_lines.append(line)
+                continue
+            if in_skills_section and stripped:
+                list_item_match = re.match(r'^[-*•]\s*(.+)$', stripped)
+                if list_item_match:
+                    item_content = list_item_match.group(1).strip()
+                    individual_skills = _split_list_items(item_content)
+                    for skill in individual_skills:
+                        skill = skill.strip()
+                        if skill:
+                            result_lines.append(
+                                f"El candidato tiene conocimientos en {skill}."
+                            )
+                else:
+                    result_lines.append(line)
+            else:
+                result_lines.append(line)
+        return '\n'.join(result_lines)
+
+    preprocess_tests = [
+        {
+            "name": "Habilidades simples",
+            "input": """HABILIDADES TÉCNICAS:
+
+- Python (avanzado)
+- FastAPI
+- Docker""",
+            "expected_phrases": [
+                "El candidato tiene conocimientos en Python (avanzado).",
+                "El candidato tiene conocimientos en FastAPI.",
+                "El candidato tiene conocimientos en Docker.",
+            ]
+        },
+        {
+            "name": "Habilidades compuestas con coma",
+            "input": """HABILIDADES:
+
+- Git, Docker
+- SQL y NoSQL""",
+            "expected_phrases": [
+                "El candidato tiene conocimientos en Git.",
+                "El candidato tiene conocimientos en Docker.",
+                "El candidato tiene conocimientos en SQL.",
+                "El candidato tiene conocimientos en NoSQL.",
+            ]
+        },
+        {
+            "name": "CV completo con varias secciones",
+            "input": """EXPERIENCIA:
+Desarrollador Python en Empresa X
+
+HABILIDADES TÉCNICAS:
+
+- Python (avanzado)
+- FastAPI
+- Machine Learning y Deep Learning
+
+FORMACIÓN:
+Ingeniería Informática""",
+            "expected_phrases": [
+                "El candidato tiene conocimientos en Python (avanzado).",
+                "El candidato tiene conocimientos en FastAPI.",
+                "El candidato tiene conocimientos en Machine Learning.",
+                "El candidato tiene conocimientos en Deep Learning.",
+            ],
+            "should_preserve": ["EXPERIENCIA:", "FORMACIÓN:", "Ingeniería Informática"]
+        },
+        {
+            "name": "Skills en inglés",
+            "input": """SKILLS:
+
+- React
+- Node.js""",
+            "expected_phrases": [
+                "El candidato tiene conocimientos en React.",
+                "El candidato tiene conocimientos en Node.js.",
+            ]
+        },
+    ]
+
+    preprocess_passed = 0
+    for test in preprocess_tests:
+        result = _preprocess_cv_skills(test["input"])
+        all_phrases_found = all(phrase in result for phrase in test["expected_phrases"])
+        preserved_ok = True
+        if "should_preserve" in test:
+            preserved_ok = all(text in result for text in test["should_preserve"])
+
+        test_ok = all_phrases_found and preserved_ok
+
+        if test_ok:
+            preprocess_passed += 1
+            status = "✅ PASS"
+        else:
+            status = "❌ FAIL"
+
+        print(f"\n{status} {test['name']}")
+        if not all_phrases_found:
+            print(f"   ❌ Frases esperadas no encontradas")
+            for phrase in test["expected_phrases"]:
+                if phrase not in result:
+                    print(f"      Falta: \"{phrase}\"")
+        if not preserved_ok:
+            print(f"   ❌ Texto que debía preservarse no encontrado")
+
+        # Mostrar resultado
+        print(f"   Resultado:")
+        for line in result.split('\n'):
+            if line.strip():
+                print(f"      {line}")
+
+    print(f"\n📊 Preprocesamiento: {preprocess_passed}/{len(preprocess_tests)} tests pasados")
+
+    # =========================================================================
+    # TEST 2: Separación de requisitos
+    # =========================================================================
+    print("\n" + "-"*60)
+    print("📝 TEST: Separación de requisitos compuestos")
+    print("-"*60)
 
     # Casos de prueba para separación
     separation_tests = [

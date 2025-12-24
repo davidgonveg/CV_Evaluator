@@ -47,8 +47,14 @@ CV DEL CANDIDATO:
 INSTRUCCIONES:
 1. Para cada requisito, determina si el CV lo cumple, no lo cumple, o no hay información suficiente.
 2. Sé riguroso pero justo en la evaluación.
-3. Si el CV menciona experiencia o conocimientos relacionados, considera que cumple el requisito.
-4. Si no hay mención alguna del tema en el CV, clasifícalo como "not_found".
+3. IMPORTANTE para detectar conocimientos:
+   - Si el CV dice "El candidato tiene conocimientos en X" -> el candidato CUMPLE cualquier requisito sobre X
+   - Si una tecnología aparece mencionada en experiencia laboral o habilidades -> CUMPLE
+   - El nombre exacto de la tecnología es suficiente (ej: "FastAPI" en CV cumple requisito de "FastAPI")
+4. Criterios de evaluación:
+   - "matching": El CV menciona la tecnología, experiencia o conocimiento requerido
+   - "not_found": No hay mención alguna del tema en el CV
+   - "unmatching": El CV indica explícitamente que NO tiene esa experiencia/conocimiento
 
 Responde ÚNICAMENTE con un JSON válido con esta estructura exacta:
 {{
