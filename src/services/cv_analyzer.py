@@ -367,9 +367,8 @@ class CVAnalyzer:
                     discarding_req = req_desc
             elif status == "not_found":
                 not_found.append(req_desc)
-                if is_mandatory:
-                    discarded = True
-                    discarding_req = req_desc
+                # NOTA: Si es obligatorio pero no se encuentra, NO se descarta aún.
+                # Se debe preguntar en la entrevista. Sólo 'unmatching' descarta.
 
         # Calcular puntuación (todos los requisitos pesan igual)
         total_requirements = mandatory_total + optional_total
