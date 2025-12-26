@@ -15,6 +15,106 @@ from src.prompts.templates import PARSE_OFFER_PROMPT, EVALUATE_CV_PROMPT
 from src.services.llm_service import LLMService
 
 
+def _preprocess_cv_skills(cv_text: str) -> str:
+    """
+    Pre-procesa el CV para reformatear las secciones de habilidades.
+
+    Transforma listas de habilidades en frases explícitas para mejorar
+    la detección por parte del LLM.
+
+    Ejemplo:
+        HABILIDADES:
+        - FastAPI
+        - Docker, Kubernetes
+
+        Se convierte en:
+
+        HABILIDADES:
+        El candidato tiene conocimientos en FastAPI.
+        El candidato tiene conocimientos en Docker.
+        El candidato tiene conocimientos en Kubernetes.
+
+    Args:
+        cv_text: Texto original del CV
+
+    Returns:
+        CV con las habilidades reformateadas
+    """
+    # Patrones para detectar secciones de habilidades
+    skills_section_patterns = [
+        r'(?i)(habilidades\s*t[eé]cnicas\s*:?)',
+        r'(?i)(habilidades\s*:?)',
+        r'(?i)(skills\s*:?)',
+        r'(?i)(tecnolog[ií]as\s*:?)',
+        r'(?i)(conocimientos\s*t[eé]cnicos\s*:?)',
+        r'(?i)(stack\s*tecnol[oó]gico\s*:?)',
+        r'(?i)(competencias\s*t[eé]cnicas\s*:?)',
+    ]
+
+    # Patrones para detectar otras secciones (fin de habilidades)
+    other_section_patterns = [
+        r'(?i)^(experiencia|formaci[oó]n|educaci[oó]n|idiomas|proyectos|'
+        r'certificaciones|referencias|sobre\s*m[ií]|perfil|objetivo)',
+    ]
+
+    lines = cv_text.split('\n')
+    result_lines = []
+    in_skills_section = False
+    current_section_header = None
+
+    for line in lines:
+        stripped = line.strip()
+
+        # Detectar inicio de sección de habilidades
+        is_skills_header = False
+        for pattern in skills_section_patterns:
+            if re.match(pattern, stripped):
+                is_skills_header = True
+                current_section_header = stripped
+                break
+
+        if is_skills_header:
+            in_skills_section = True
+            result_lines.append(line)
+            continue
+
+        # Detectar fin de sección de habilidades (otra sección comienza)
+        is_other_section = False
+        for pattern in other_section_patterns:
+            if re.match(pattern, stripped):
+                is_other_section = True
+                break
+
+        if is_other_section:
+            in_skills_section = False
+            result_lines.append(line)
+            continue
+
+        # Si estamos en sección de habilidades, procesar items
+        if in_skills_section and stripped:
+            # Detectar si es un item de lista (- item, * item, • item)
+            list_item_match = re.match(r'^[-*•]\s*(.+)$', stripped)
+
+            if list_item_match:
+                item_content = list_item_match.group(1).strip()
+                # Separar items compuestos (X, Y y Z)
+                individual_skills = _split_list_items(item_content)
+
+                for skill in individual_skills:
+                    skill = skill.strip()
+                    if skill:
+                        result_lines.append(
+                            f"El candidato tiene conocimientos en {skill}."
+                        )
+            else:
+                # Línea sin formato de lista, mantener como está
+                result_lines.append(line)
+        else:
+            result_lines.append(line)
+
+    return '\n'.join(result_lines)
+
+
 def _split_compound_requirement(description: str) -> List[str]:
     """
     Separa un requisito compuesto en requisitos individuales.
@@ -205,12 +305,15 @@ class CVAnalyzer:
             for req in job_offer.requirements
         ]
 
+        # Pre-procesar CV para mejorar detección de habilidades
+        processed_cv = _preprocess_cv_skills(cv_text)
+
         # Obtener evaluación del LLM
         response = self.llm.invoke_with_template_json(
             EVALUATE_CV_PROMPT,
             {
                 "requirements_json": str(requirements_json),
-                "cv_text": cv_text,
+                "cv_text": processed_cv,
             }
         )
 
@@ -264,9 +367,8 @@ class CVAnalyzer:
                     discarding_req = req_desc
             elif status == "not_found":
                 not_found.append(req_desc)
-                if is_mandatory:
-                    discarded = True
-                    discarding_req = req_desc
+                # NOTA: Si es obligatorio pero no se encuentra, NO se descarta aún.
+                # Se debe preguntar en la entrevista. Sólo 'unmatching' descarta.
 
         # Calcular puntuación (todos los requisitos pesan igual)
         total_requirements = mandatory_total + optional_total

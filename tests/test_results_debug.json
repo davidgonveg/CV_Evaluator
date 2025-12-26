@@ -1,0 +1,376 @@
+[
+  {
+    "id": "1_typo_resilience",
+    "passed": false,
+    "failures": [
+      "Matching count mismatch: Expected 2, got 4 (['Experto en Python', 'Experto en Kubernetes', 'AWS Solutions Architect', 'Native English speaker'])"
+    ],
+    "raw_result": {
+      "score": 66,
+      "discarded": false,
+      "matching_requirements": [
+        "Experto en Python",
+        "Experto en Kubernetes",
+        "AWS Solutions Architect",
+        "Native English speaker"
+      ],
+      "unmatching_requirements": [],
+      "not_found_requirements": [
+        "Experto en Python",
+        "Uso diario de Docker"
+      ],
+      "discarding_requirement": null,
+      "evaluations_with_reasoning": [
+        {
+          "requirement": "Experto en Python",
+          "requirement_type": "mandatory",
+          "status": "matching",
+          "reasoning": "El CV dice 'Experiencia: 3 años desarrollando scripts en Pythen'"
+        },
+        {
+          "requirement": "Experto en Kubernetes",
+          "requirement_type": "mandatory",
+          "status": "matching",
+          "reasoning": "El CV dice 'Experiencia: 3 años gestionando clusters de Kubernets'"
+        },
+        {
+          "requirement": "AWS Solutions Architect",
+          "requirement_type": "optional",
+          "status": "matching",
+          "reasoning": "El CV dice 'CERTIFICACIONES: AWS Solutions Architect'"
+        },
+        {
+          "requirement": "Experto en Python",
+          "requirement_type": "mandatory",
+          "status": "not_found",
+          "reasoning": "El CV no dice 'El candidato tiene conocimientos en Python'"
+        },
+        {
+          "requirement": "Uso diario de Docker",
+          "requirement_type": "mandatory",
+          "status": "not_found",
+          "reasoning": "El CV no dice 'Habilidades: Uso diario de Docker'"
+        },
+        {
+          "requirement": "Native English speaker",
+          "requirement_type": "optional",
+          "status": "matching",
+          "reasoning": "El CV dice 'Native English speaker'"
+        }
+      ],
+      "summary": {
+        "status": "REVISAR",
+        "strengths": [
+          "Experto en Python",
+          "Experto en Kubernetes",
+          "AWS Solutions Architect",
+          "Native English speaker"
+        ],
+        "gaps": [
+          "Experto en Python",
+          "Uso diario de Docker"
+        ],
+        "recommendation": "Candidato con potencial, revisar gaps antes de decidir."
+      },
+      "score_breakdown": {
+        "total_requirements": 6,
+        "fulfilled": 4,
+        "mandatory": {
+          "fulfilled": 2,
+          "total": 4
+        },
+        "optional": {
+          "fulfilled": 2,
+          "total": 2
+        }
+      }
+    }
+  },
+  {
+    "id": "2_indirect_mention",
+    "passed": false,
+    "failures": [
+      "Matching count mismatch: Expected 1, got 3 (['Nivel alto de Inglés', 'AWS', 'Docker'])"
+    ],
+    "raw_result": {
+      "score": 60,
+      "discarded": false,
+      "matching_requirements": [
+        "Nivel alto de Inglés",
+        "AWS",
+        "Docker"
+      ],
+      "unmatching_requirements": [],
+      "not_found_requirements": [
+        "Python",
+        "FastAPI"
+      ],
+      "discarding_requirement": null,
+      "evaluations_with_reasoning": [
+        {
+          "requirement": "Nivel alto de Inglés",
+          "requirement_type": "mandatory",
+          "status": "matching",
+          "reasoning": "El CV del candidato dice ser un Native English speaker."
+        },
+        {
+          "requirement": "AWS",
+          "requirement_type": "mandatory",
+          "status": "matching",
+          "reasoning": "El CV del candidato tiene una certificación de AWS Solutions Architect."
+        },
+        {
+          "requirement": "Python",
+          "requirement_type": "mandatory",
+          "status": "not_found",
+          "reasoning": "El CV del candidato no menciona Python explícitamente."
+        },
+        {
+          "requirement": "Docker",
+          "requirement_type": "mandatory",
+          "status": "matching",
+          "reasoning": "El CV del candidato dice usar Docker diariamente."
+        },
+        {
+          "requirement": "FastAPI",
+          "requirement_type": "mandatory",
+          "status": "not_found",
+          "reasoning": "El CV del candidato no menciona FastAPI explícitamente."
+        }
+      ],
+      "summary": {
+        "status": "REVISAR",
+        "strengths": [
+          "Nivel alto de Inglés",
+          "AWS",
+          "Docker"
+        ],
+        "gaps": [
+          "Python",
+          "FastAPI"
+        ],
+        "recommendation": "Candidato con potencial, revisar gaps antes de decidir."
+      },
+      "score_breakdown": {
+        "total_requirements": 5,
+        "fulfilled": 3,
+        "mandatory": {
+          "fulfilled": 3,
+          "total": 5
+        },
+        "optional": {
+          "fulfilled": 0,
+          "total": 0
+        }
+      }
+    }
+  },
+  {
+    "id": "3_ambiguous_role",
+    "passed": false,
+    "failures": [
+      "Matching count mismatch: Expected 0, got 4 (['Experiencia programando en Java.', 'AWS.', 'Docker.', 'Inglés alto.'])"
+    ],
+    "raw_result": {
+      "score": 80,
+      "discarded": false,
+      "matching_requirements": [
+        "Experiencia programando en Java.",
+        "AWS.",
+        "Docker.",
+        "Inglés alto."
+      ],
+      "unmatching_requirements": [],
+      "not_found_requirements": [
+        "Python."
+      ],
+      "discarding_requirement": null,
+      "evaluations_with_reasoning": [
+        {
+          "requirement": "Experiencia programando en Java.",
+          "requirement_type": "mandatory",
+          "status": "matching",
+          "reasoning": "El CV del candidato menciona experiencia como Project Manager en un equipo de desarrollo Java, lo que indica conocimiento y experiencia en programación en Java."
+        },
+        {
+          "requirement": "AWS.",
+          "requirement_type": "mandatory",
+          "status": "matching",
+          "reasoning": "El CV del candidato tiene una certificación AWS Solutions Architect, lo que indica conocimiento en AWS."
+        },
+        {
+          "requirement": "Python.",
+          "requirement_type": "mandatory",
+          "status": "not_found",
+          "reasoning": "El CV del candidato no menciona experiencia o conocimientos específicos en Python."
+        },
+        {
+          "requirement": "Docker.",
+          "requirement_type": "mandatory",
+          "status": "matching",
+          "reasoning": "El CV del candidato menciona uso diario de Docker, lo que indica conocimiento en Docker."
+        },
+        {
+          "requirement": "Inglés alto.",
+          "requirement_type": "mandatory",
+          "status": "matching",
+          "reasoning": "El CV del candidato se describe como un native English speaker, lo que indica fluidez en el idioma inglés."
+        }
+      ],
+      "summary": {
+        "status": "APTO",
+        "strengths": [
+          "Experiencia programando en Java.",
+          "AWS.",
+          "Docker.",
+          "Inglés alto."
+        ],
+        "gaps": [
+          "Python."
+        ],
+        "recommendation": "Candidato recomendado para continuar en el proceso."
+      },
+      "score_breakdown": {
+        "total_requirements": 5,
+        "fulfilled": 4,
+        "mandatory": {
+          "fulfilled": 4,
+          "total": 5
+        },
+        "optional": {
+          "fulfilled": 0,
+          "total": 0
+        }
+      }
+    }
+  },
+  {
+    "id": "4_explicit_negative",
+    "passed": true,
+    "failures": [],
+    "raw_result": {
+      "score": 0,
+      "discarded": true,
+      "matching_requirements": [
+        "AWS Solutions Architect.",
+        "Experto en Python.",
+        "Uso diario de Docker."
+      ],
+      "unmatching_requirements": [
+        "Conocimientos de React."
+      ],
+      "not_found_requirements": [
+        "Inglés alto."
+      ],
+      "discarding_requirement": "Conocimientos de React.",
+      "evaluations_with_reasoning": [
+        {
+          "requirement": "Conocimientos de React.",
+          "requirement_type": "mandatory",
+          "status": "unmatching",
+          "reasoning": "El CV dice 'React: Nulo, nunca lo he usado.'"
+        },
+        {
+          "requirement": "AWS Solutions Architect.",
+          "requirement_type": "optional",
+          "status": "matching",
+          "reasoning": "El CV tiene una certificación en AWS Solutions Architect."
+        },
+        {
+          "requirement": "Experto en Python.",
+          "requirement_type": "optional",
+          "status": "matching",
+          "reasoning": "El CV dice 'Experto en Python'."
+        },
+        {
+          "requirement": "Uso diario de Docker.",
+          "requirement_type": "optional",
+          "status": "matching",
+          "reasoning": "El CV dice 'Uso diario de Docker'."
+        },
+        {
+          "requirement": "Inglés alto.",
+          "requirement_type": "mandatory",
+          "status": "not_found",
+          "reasoning": "El CV no menciona nada sobre ser un native English speaker."
+        }
+      ],
+      "summary": {
+        "status": "NO APTO",
+        "strengths": [
+          "AWS Solutions Architect.",
+          "Experto en Python.",
+          "Uso diario de Docker."
+        ],
+        "gaps": [
+          "Conocimientos de React.",
+          "Inglés alto."
+        ],
+        "recommendation": "Descartado por no cumplir requisito obligatorio: Conocimientos de React."
+      },
+      "score_breakdown": {
+        "total_requirements": 5,
+        "fulfilled": 3,
+        "mandatory": {
+          "fulfilled": 0,
+          "total": 2
+        },
+        "optional": {
+          "fulfilled": 3,
+          "total": 3
+        }
+      }
+    }
+  },
+  {
+    "id": "5_scattered_info",
+    "passed": true,
+    "failures": [],
+    "raw_result": {
+      "score": 100,
+      "discarded": false,
+      "matching_requirements": [
+        "Docker",
+        "AWS"
+      ],
+      "unmatching_requirements": [],
+      "not_found_requirements": [],
+      "discarding_requirement": null,
+      "evaluations_with_reasoning": [
+        {
+          "requirement": "Docker",
+          "requirement_type": "mandatory",
+          "status": "matching",
+          "reasoning": "El CV menciona el uso de contenedores para microservicios."
+        },
+        {
+          "requirement": "AWS",
+          "requirement_type": "mandatory",
+          "status": "matching",
+          "reasoning": "El CV tiene una certificación en AWS Solutions Architect."
+        }
+      ],
+      "summary": {
+        "status": "APTO",
+        "strengths": [
+          "Docker",
+          "AWS"
+        ],
+        "gaps": [],
+        "recommendation": "Candidato recomendado para continuar en el proceso."
+      },
+      "score_breakdown": {
+        "total_requirements": 2,
+        "fulfilled": 2,
+        "mandatory": {
+          "fulfilled": 2,
+          "total": 2
+        },
+        "optional": {
+          "fulfilled": 0,
+          "total": 0
+        }
+      }
+    }
+  }
+]

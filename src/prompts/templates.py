@@ -47,8 +47,32 @@ CV DEL CANDIDATO:
 INSTRUCCIONES:
 1. Para cada requisito, determina si el CV lo cumple, no lo cumple, o no hay información suficiente.
 2. Sé riguroso pero justo en la evaluación.
-3. Si el CV menciona experiencia o conocimientos relacionados, considera que cumple el requisito.
-4. Si no hay mención alguna del tema en el CV, clasifícalo como "not_found".
+3. IMPORTANTE para detectar conocimientos:
+   - Si el CV dice "El candidato tiene conocimientos en X" -> el candidato CUMPLE cualquier requisito sobre X
+   - Si una tecnología aparece mencionada en experiencia laboral o habilidades -> CUMPLE
+   - El nombre exacto de la tecnología es suficiente (ej: "FastAPI" en CV cumple requisito de "FastAPI")
+4. Criterios de evaluación (SIGUE ESTE ORDEN):
+   
+   PASO 1: Busca PALABRAS CLAVE NEGATIVAS (Prioridad Máxima).
+   - Si dice "React: Nulo", "Java: No", "Sin experiencia en X", "Nunca he usado X".
+   - ESTADO: "unmatching". (Aunque aparezca la palabra, si el contexto es negativo, es unmatching).
+
+   PASO 2: Busca EVIDENCIA POSITIVA (Certificaciones y Habilidades).
+   - CERTIFICACIONES: "AWS Solutions Architect" -> CUMPLE requisito "AWS".
+   - HABILIDADES EXPLÍCITAS: "Experto en Python", "Uso diario de Docker".
+   - ESTADO: "matching".
+   - TOLERANCIA: "Pythen" vale por "Python". "Kubernets" vale por "Kubernetes".
+
+   PASO 3: Evalúa ROLES AMBIGUOS.
+   - Si el candidato fue "Project Manager", "Product Owner" o "Scrum Master" en un equipo de "Java":
+   - ¿Menciona explícitamente en la descripción que ÉL programaba?
+     * SÍ -> "matching".
+     * NO -> "not_found" (Asume que gestionaba, no programaba).
+
+   PASO 4: Inferencia.
+   - "Native English speaker" -> CUMPLE "Inglés alto".
+   
+   Si no encaja en ninguno de los anteriores -> "not_found".
 
 Responde ÚNICAMENTE con un JSON válido con esta estructura exacta:
 {{

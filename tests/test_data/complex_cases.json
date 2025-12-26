@@ -1,0 +1,53 @@
+[
+    {
+        "id": "1_typo_resilience",
+        "description": "Resilience to typos in critical keywords",
+        "offer": "Buscamos experto en Python y Kubernetes.",
+        "cv": "Experiencia: 3 años desarrollando scripts en Pythen y gestionando clusters de Kubernets.",
+        "expected": {
+            "matching_count": 2,
+            "discarded": false
+        }
+    },
+    {
+        "id": "2_indirect_mention",
+        "description": "Understanding indirect but clear mentions",
+        "offer": "Requisito: Nivel alto de Inglés.",
+        "cv": "Idiomas: Native English speaker from London.",
+        "expected": {
+            "matching_count": 1,
+            "discarded": false
+        }
+    },
+    {
+        "id": "3_ambiguous_role",
+        "description": "Ambiguous role description (should NOT match if not explicit)",
+        "offer": "Requisito: Experiencia programando en Java.",
+        "cv": "Experiencia: Project Manager en un equipo de desarrollo Java. Gestionaba el backlog y los sprints.",
+        "expected": {
+            "matching_count": 0,
+            "not_found_count": 1,
+            "discarded": false
+        }
+    },
+    {
+        "id": "4_explicit_negative",
+        "description": "Explicit negative mention (should be unmatching)",
+        "offer": "Requisito: Conocimientos de React.",
+        "cv": "Habilidades: Vue.js (Experto). React: Nulo, nunca lo he usado.",
+        "expected": {
+            "unmatching_count": 1,
+            "discarded": true
+        }
+    },
+    {
+        "id": "5_scattered_info",
+        "description": "Information scattered across different sections",
+        "offer": "Requisitos: Docker y AWS.",
+        "cv": "Resumen: Ingeniero DevOps apasionado de la nube.\nExperiencia: Uso de contenedores para microservicios.\nCertificaciones: AWS Solutions Architect.",
+        "expected": {
+            "matching_count": 2,
+            "discarded": false
+        }
+    }
+]
